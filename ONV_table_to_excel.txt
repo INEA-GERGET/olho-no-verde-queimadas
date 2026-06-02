@@ -1,0 +1,56 @@
+''''
+Script usado para extrair as tabelas de atributos da saida dos intersects ou do dissolve
+O input deve ser o gdb com o dissolve e o output a pasta csv do script do layout
+'''
+
+import arcpy
+import os
+
+# Caminho 
+gdb_directory = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\Output_dissolve.gdb"  # TROCAR
+arcpy.env.workspace = gdb_directory
+gdb_layers = arcpy.ListFeatureClasses()
+
+Saida = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\CSVs"  # TROCAR
+
+# Diretório de saída
+output_directory = Saida
+os.makedirs(output_directory, exist_ok=True)
+
+def coletar_dados():
+    """
+    Extrai as tabelas de atributos e converte para CSV
+    atribute table -> CSV"""
+    for layer in gdb_layers:
+        print(f"Processando: {layer}")
+        if not arcpy.Exists(layer):
+            print(f"A camada {layer} não existe ou não é suportada.")
+            continue
+
+        # Nome de saída
+        layer_name = os.path.splitext(os.path.basename(layer))[0]
+        nome_saida_csv = os.path.join(output_directory, f"tabela_{layer_name}.csv")
+
+        try:
+            # Exportar a tabela de atributos para CSV
+            arcpy.TableToTable_conversion(layer, output_directory, f"tabela_{layer_name}.csv")
+            print(f"Dados extraídos para: {nome_saida_csv}")
+
+        except Exception as e:
+            print(f"Erro ao processar {layer}: {str(e)}")
+
+coletar_dados()
+
+def delete_files(directory, condition):
+    files = os.listdir(directory)
+    for file in files:
+        file_path = os.path.join(directory, file)
+        if os.path.isfile(file_path) and not file.endswith(condition):
+            os.remove(file_path)
+            print(f"Arquivo excluído: {file_path}")
+
+condition = ".csv"
+delete_files(Saida, condition)
+
+print("fim do processamento")
+

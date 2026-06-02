@@ -1,0 +1,85 @@
+import arcpy
+import os
+
+# Caminhos
+feature_class_principal = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\cicatrizes_teste.shp"
+gdb_directory = r"C:\Users\ceciliaaeo\Documents\onv\GDB_Cruzamentos_Laudos\ONV_Cruzamentos_e_Laudos.gdb"
+
+output_intersect_dir = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\output_intersect.gdb"
+output_dissolve_dir = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\output_dissolve.gdb"
+
+# Cria diretórios se não existirem
+os.makedirs(output_intersect_dir, exist_ok=True)
+os.makedirs(output_dissolve_dir, exist_ok=True)
+
+# Define ambiente de trabalho e lista camadas
+arcpy.env.workspace = gdb_directory
+gdb_layers = arcpy.ListFeatureClasses()
+
+# Campos a preservar (também usados para o dissolve)
+campos_dissolve = [
+   "Tipo1", 'tipo_app2', 'Tipo_3', "Tipo_4", "tipo_5", "Tipo_6", "Nome", "Tipo_7", "Tipo_8", "NOME", 'tp_app9', "grau",
+    "cod_imovel", "classe", "vegetacao2", "municn", "Tipo_16",
+    "NomeOficia", "rotulo", "zona", "label", "area_ha", "area_m2", "centro_x", "centro_y",
+    "ant_dep", "link_kml", "data_atual", "data_refer", "cod_imov_1", "status",
+    "cpf", "nome", "Licenc", "superinten", "class", "empreend", "nprocess",
+    'Geocode', 'Nome_FDA', 'Nome_RPPN', 'descriptio', 'name_2', 'name_3',
+    'nome_ucm', 'nome_uce', 'nome_ucf', "nm_upam", 'vegetacao2024',
+    "Nome_Final", "numero_pro", "instrument", "id", 'email', 'tel', 'classe_01', 'classe_02', 'classe_03', 
+    'classe_04', 'classe_05', 	'class_fund', 'mod_fiscal', 'area_prop', 'fmp', 'idtxt', 'data_ocorr', 'data_refer', 'data_duran']
+
+# Função principal
+def processor_intersects():
+    for layer_name in gdb_layers:
+        layer_path = os.path.join(gdb_directory, layer_name)
+
+        if not arcpy.Exists(layer_path):
+            print(f"❌ Camada {layer_name} não encontrada.")
+            continue
+
+        try:
+            nome_intersecao = f"nova_camada_inter_{layer_name}"
+            path_intersecao = os.path.join(output_intersect_dir, f"{nome_intersecao}")
+
+            # ------------------------------------------ Intersect ------------------------------------------
+            arcpy.Intersect_analysis([feature_class_principal, layer_path], path_intersecao, join_attributes="ALL")
+            print(f"✅ Interseção criada: {path_intersecao}")
+
+            # Lista os nomes dos campos que realmente existem na camada de interseção.
+            campos_existentes = [field.name for field in arcpy.ListFields(path_intersecao)]
+
+            # Cria uma lista apenas com os campos da sua lista 'campos_dissolve' que foram encontrados.
+            campos_validos_para_dissolve = [campo for campo in campos_dissolve if campo in campos_existentes]
+            print(f"ℹ️ Campos válidos encontrados para o dissolve: {len(campos_validos_para_dissolve)}")
+
+            # ------------------------------------------ Dissolve ------------------------------------------
+            dissolve_output = os.path.join(output_dissolve_dir, f"Dissolve_{nome_intersecao}")
+            # Usa a nova lista de campos válidos na ferramenta Dissolve.
+            arcpy.Dissolve_management(path_intersecao, dissolve_output, campos_validos_para_dissolve)
+            print(f"✅ Dissolve concluído: {dissolve_output}")
+
+            # Adiciona campos de área e porcentagem
+            arcpy.AddField_management(dissolve_output, "area_inter", "DOUBLE")
+            arcpy.AddField_management(dissolve_output, "porc", "DOUBLE")
+
+            arcpy.CalculateField_management(dissolve_output, "area_inter", "!shape.geodesicArea@meters!", "PYTHON3")
+
+            # Calcula campo 'porc' com base em 'area_m2'
+            fields = [f.name for f in arcpy.ListFields(dissolve_output)]
+            if 'area_inter' in fields and 'area_m2' in fields:
+                with arcpy.da.UpdateCursor(dissolve_output, ['area_inter', 'area_m2', 'porc']) as cursor:
+                    for row in cursor:
+                        area_inter = row[0]
+                        area_m2 = row[1]
+                        row[2] = (area_inter / area_m2) * 100 if area_m2 else 0
+                        cursor.updateRow(row)
+
+                print(f"✅ Campos 'area_inter' e 'porc' atualizados para: {dissolve_output}")
+
+        except Exception as e:
+            print(f"❌ Erro ao processar {layer_name}: {e}")
+            continue
+
+# Executar
+processor_intersects()
+print("🎉 Todos os cruzamentos foram processados com sucesso.")
