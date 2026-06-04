@@ -1,12 +1,12 @@
 import arcpy
 import os
 
-# Caminhos
-feature_class_principal = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\cicatrizes_teste.shp"
-gdb_directory = r"C:\Users\ceciliaaeo\Documents\onv\GDB_Cruzamentos_Laudos\ONV_Cruzamentos_e_Laudos.gdb"
+# Caminhos 
+feature_class_principal = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\camada\operações_diss.shp"  # TROCAR
+gdb_directory = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\Cruzamentos_ONV_.gdb"  # TROCAR
 
-output_intersect_dir = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\output_intersect.gdb"
-output_dissolve_dir = r"C:\Users\ceciliaaeo\Documents\Queimadas_Cicatrizes\Projetos\teste_barbara\output_dissolve.gdb"
+output_intersect_dir = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\Output_intersect.gdb"  # TROCAR
+output_dissolve_dir = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\Output_dissolve.gdb"  # TROCAR
 
 # Cria diretórios se não existirem
 os.makedirs(output_intersect_dir, exist_ok=True)
