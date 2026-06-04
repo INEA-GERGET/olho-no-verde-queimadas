@@ -11,7 +11,7 @@ gdb_directory = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\Output_dissolve.gd
 arcpy.env.workspace = gdb_directory
 gdb_layers = arcpy.ListFeatureClasses()
 
-Saida = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\CSVs"  # TROCAR
+Saida = r"C:\Users\Nome-de-usuario\Desktop\Laudos_ONV\CSVs"  # TROCARR
 
 # Diretório de saída
 output_directory = Saida
