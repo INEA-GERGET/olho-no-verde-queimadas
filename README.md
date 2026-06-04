@@ -84,10 +84,9 @@ Alguns arquivos necessitam de mudança no caminho para os documentos, atente-se 
 
 Sobre os arquivos:
 1. **Input**: Nesta pasta todos os arquivos mutáveis do programa estarão aqui. São os inputs necessários para gerar os laudos. Nela deverão conter os seguintes arquivos:
-   1. **df_id_embargo_onvc.xlsx**: Arquivo excel com o ID de Laudo (para embargos).
-   2. **CSVs**: Esta pasta deverá armazenar a `tabela_car.xlsx` (para embargos), `cicatrizes_em_uso.xlsx` e todas as tabelas provenientes do Dissolve. 
-   3. **antes_depois**: Nesta pasta você irá colocar as imagens de antes e depois em png pu jpg. O nome da imagem deve ser o nome do ID do Alerta.
-   4. **camada**: Esta pasta contém arquivos em formato GeoDataFrame, `cicatrizes_em_uso.shp` para gerar mapas no Laudo.
+   1. **CSVs**: Esta pasta deverá armazenar a `tabela_car.xlsx` (para embargos), `cicatrizes_em_uso.xlsx` e todas as tabelas provenientes do Dissolve. 
+   2. **antes_depois**: Nesta pasta você irá colocar as imagens de antes e depois em png pu jpg. O nome da imagem deve ser o nome do ID do Alerta.
+   3. **camada**: Esta pasta deverá conter arquivos em formato GeoDataFrame, `cicatrizes_em_uso.shp` para gerar mapas no Laudo.
 2. **Output**: Nesta pasta estarão os resultados do script: a planilha merge, os relatórios de alerta e de embargo e duas pastas de mapas, que no final do script deverão ficar vazias.
 3. **arquivos**: Nesta pasta estão os arquivos de imagem necessários para o layout do documento, tais como: papel timbrado, logos, cabeçalho, rodapé e referências.
 4. **config**: Nesta pasta está o acesso para o Portal GEOINEA.
