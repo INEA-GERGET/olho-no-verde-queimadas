@@ -589,6 +589,7 @@ def create_pdf_for_idtxt(idtxt, nome_table, cicatriz_data, inter_data, png_folde
                                 'Marica':'Maricá',
                                 'Nilopolis':'Nilópolis',
                                 'Niteroi':'Niterói',
+                                'Nova Iguacu':'Nova Iguaçu',
                                 'Paraiba Do Sul':'Paraíba Do Sul',
                                 'Petropolis':'Petrópolis',
                                 'Pirai':'Piraí',
